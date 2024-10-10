@@ -67,151 +67,205 @@ def build_prompt(task_description):
     # Inspirational code snippet for the solution
     inspirational_code = """
     
-        import java.util.ArrayList;
-        import java.util.Iterator;
-        import java.util.Random;
+        // REPOBEE-SANITIZER-SHRED
+import java.util.HashMap;
 
-        public class RandomTester {
-            
-            /**
-            * Generate n random numbers.
-            * @param n the number of random numbers to generate.
-            * @return an ArrayList of n random numbers.
-            */
-            public static ArrayList<Integer> generateNumbers(int n) {
-                Random random = new Random();
-                ArrayList<Integer> numbers = new ArrayList<Integer>();
-                for (int i = 0; i < n; i++) {
-                    numbers.add(random.nextInt());
-                }
-                return numbers;
+/**
+ * A file to analyze text
+ * @author Linus Östlund
+ */
+public class FileTextAnalyzer {
+    private FileWordSplitter words;
+    private HashMap<String, Integer> wordOccurrences;
+
+    public FileTextAnalyzer(String filename) {
+        wordOccurrences = new HashMap<>();
+
+        // Create a new FileWordSplitter (FWS)
+        words = new FileWordSplitter(filename);
+
+        // Iterate over all words in the FWS
+        for (String word : words.getWords()) {
+            // If it is the first occurrence, set value to 1
+            word = word.toLowerCase();
+            if(!wordOccurrences.containsKey(word)) {
+                wordOccurrences.put(word, 1);
+            } else {
+                // Otherwise, increment the current value
+                int oldValue = wordOccurrences.get(word);
+                wordOccurrences.put(word, oldValue + 1);
+
+                // Alternate solution:
+                // wordOccurrences.merge(word, 1, Integer::sum);
             }
-
-            /**
-            * Return a shuffled copy of a list, without modifying the original list.
-            * @param list the list to shuffle.
-            * @return a shuffled copy of the list.
-            */
-            public static ArrayList<Integer> shuffle(ArrayList<Integer> list) {
-                ArrayList<Integer> copy = new ArrayList<Integer>(list);
-                ArrayList<Integer> shuffled = new ArrayList<Integer>();
-                Random random = new Random();
-                while (copy.size() > 0) {
-                    int index = random.nextInt(copy.size());
-                    shuffled.add(copy.remove(index));
-                }
-                return shuffled;
-            }
-
-            /**
-            * Generate an ArrayList of n dice.
-            * @param n the number of dice to generate.
-            * @return an ArrayList of n dice.
-            */
-            public static ArrayList<Dice> sequenceOfDice(int n) {
-                ArrayList<Dice> dice = new ArrayList<Dice>();
-                for (int i = 0; i < n; i++) {
-                    dice.add(new Dice());
-                }
-                return dice;
-            }
-
-            /**
-            * Return the sum of the two highest adjacent rolls in a list of dice.
-            * @param sequence
-            * @return the sum of the two highest adjacent rolls in a list of dice.
-            */
-            public static int highestAdjacentRolls(ArrayList<Dice> sequence) {
-                int res = 0;
-                for (int i = 0; i < sequence.size() - 1; i++) {
-                    if (sequence.get(i).getValue() + sequence.get(i + 1).getValue() > res) {
-                        res = sequence.get(i).getValue() + sequence.get(i + 1).getValue();
-                    }
-                }
-                return res;
-            }
-
-            /**
-            * Return the sum of the two smallest adjacent rolls in a list of dice.
-            * @param sequence the list of dice.
-            * @return the sum of the two smallest adjacent rolls in a list of dice.
-            */
-            public static int smallestAdjacentRolls(ArrayList<Dice> sequence) {
-                if (sequence.size() < 0) {
-                    return 0;
-                }
-                int res = sequence.get(0).getValue() + sequence.get(1).getValue();
-
-                for (int i = 2; i < sequence.size() - 1; i++) {
-                    if (sequence.get(i).getValue() + sequence.get(i + 1).getValue() < res) {
-                        res = sequence.get(i).getValue() + sequence.get(i + 1).getValue();
-                    }
-                }
-                return res;
-            }
-
-            /**
-            * Create a copy of a sequence of dice, with all occurences of a given value removed.
-            * @param sequence the sequence of dice to copy.
-            * @param n the value to remove.
-            * @return a copy of the sequence of dice, with all occurences of a given value removed.
-            */
-            public static ArrayList<Dice> remove(ArrayList<Dice> sequence, int n) {
-                ArrayList<Dice> res = new ArrayList<Dice>(sequence);
-                Iterator<Dice> it = res.iterator();
-                while (it.hasNext()) {
-                    if (it.next().getValue() == n) {
-                        it.remove();
-                    }
-                }
-                return res;
-            }
-        }
-
-
-    import java.util.Random;
-    /**
-    * A class that represents a dice.
-    */
-    public class Dice {
-        int value;
-        Random random;
-
-        /**
-        * Create a new dice, and roll it. The resulting value can be retrieved with
-        * the getValue method.
-        */
-        public Dice() {
-            random = new Random();
-            value = random.nextInt(6) + 1;
-        }
-
-        /**
-        * Gets the value of the dice.
-        * @return the value of the dice.
-        */
-        public int getValue() {
-            return value;
-        }
-
-        /**
-        * A string representation of the dice.
-        */
-        public String toString() {
-            return Integer.toString(value);
         }
     }
+
+    /**
+     * Get the number of words in the text file
+     * @return number of words
+     */
+    public int wordCount() {
+        return words.getWords().size();
+    }
+
+    /**
+     * Get the HashMap containing all word occurrences
+     * @return HashMap of all word occurrences
+     */
+    public HashMap<String, Integer> getWordOccurrences() {
+        return wordOccurrences;
+    }
+
+    /**
+     * Return the number of occurrences of word
+     * @param word the word to count occurrences of
+     * @return the number of times the word is present in the file
+     */
+    public int occurrencesOf(String word) {
+        word = word.toLowerCase();
+        if (!wordOccurrences.containsKey(word)) {
+            return 0;
+        } else {
+            return wordOccurrences.get(word);
+        }
+    }
+
+    /**
+     * A method to find the frequency words in the file
+     * @param word the word to get the frequency of
+     * @return The number of times the word is present divided by the number of words in the file
+     */
+    public double frequencyOf(String word) {
+        word = word.toLowerCase();
+        if (wordOccurrences.containsKey(word)) {
+            // If the word is in the corpus, return the frequency of it
+            double occurrencesOfWord = occurrencesOf(word);
+            double totalAmountOfWords = wordCount();
+            return occurrencesOfWord / totalAmountOfWords;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Find out how many unique word the input file has
+     * @return the size of HashMap's key set
+     */
+    public int uniqueWordCount() {
+        return wordOccurrences.keySet().size();
+    }
+}
+
+
+
+
+// REPOBEE-SANITIZER-SHRED
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
+/**
+ * Sample solution for the File Word Splitter class
+ * @author Linus Östlund
+ */
+public class FileWordSplitter {
+    private ArrayList<String> words;
+
+    /**
+     * The constructor takes the name of a file and iterate over all words.
+     * Requires tidy data with not delimiters other than '/n' and ' ' (whitespace)
+     * @param filename name of the file. NOTE: has to be in the same folder
+     * @throws IOException if something goes wrong while reading the file
+     */
+    public FileWordSplitter(String filename) {
+
+        // Initialize the ArrayList
+        words = new ArrayList<>();
+
+        try {
+            // Attempt to open a text file
+            BufferedReader file = new BufferedReader(new FileReader(filename));
+
+            // Try to read the first line of the file
+            String line = file.readLine();
+
+            // Keep reading while there are lines left
+            while (line != null) {
+                // NOTE: input has to be tidy and only have whitespace as delimiters
+                for (String word : line.split(" ")) {
+                    words.add(word);
+                }
+
+                // read the next line
+                line = file.readLine();
+            }
+
+            // Don't forget to close the file!
+            file.close();
+
+        // Handle any errors that come up, such as the file not existing
+        } catch (IOException e) {
+            System.out.println("Something went wrong: " + e.getMessage());
+            // Exit the program
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Getter for the ArrayList of words
+     * @return the whitespace separated words
+     */
+    public ArrayList<String> getWords() {
+        return words;
+    }
+}
+
+
+
+// REPOBEE-SANITIZER-SHRED
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class WordCounter {
+
+    HashMap<String, Integer> wordCounter;
+    ArrayList<String> words;
+
+    public WordCounter(File fileName) throws FileNotFoundException {
+        Scanner sc = new Scanner(fileName);
+        this.words = new ArrayList<>();
+        while(sc.hasNextLine()) {
+            this.words.add(sc.nextLine());
+        }
+        sc.close();
+    }
+
+    public ArrayList<String> getWords(){
+        return this.words;
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
+        WordCounter wc = new WordCounter(new File("hamlet.txt"));
+        System.out.println(wc.getWords());
+    }
+}
 
 
     """
 
     additional_instructions = (
-        "IMPORTANT: The response must be plain Java code with no markdown formatting or ```java blocks. "
+        
         "Ensure that each class is entirely self-contained and is not left incomplete. "
         "No part of the next file should be left in the current file. "
         "Ensure that each class is saved in its own appropriately named file, and that there are no 'leftover' initializers or class definitions from subsequent files. "
         "Ensure all imports, public classes, and everything related to the class is included in the appropriate file. "
         "Write NO TEXT beyond the code itself, whatsoever. "
+        "IMPORTANT: The response must be plain Java code with no markdown formatting or ```java blocks. "
     )
 
     prompt = (
@@ -223,6 +277,8 @@ def build_prompt(task_description):
         f"### Inspirational Code Snippet\n\n"
         f"{inspirational_code}\n\n"
         f"{additional_instructions}"
+
+        "IMPORTANT: The response must be plain Java code with no markdown formatting or ```java blocks. "
     )
 
     return prompt
